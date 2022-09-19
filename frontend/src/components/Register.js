@@ -15,6 +15,7 @@ import { Alert, Snackbar } from "@mui/material";
 import axios from "axios";
 
 function Copyright(props) {
+
     return (
         <Typography
             variant="body2"
@@ -38,6 +39,8 @@ export default function Register() {
     const [showAlert, setShowAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState("");
     const [alertSeverity, setAlertSeverity] = useState("error");
+    const [startTime, setStartTime] = useState("01:00");
+    const [endTime, setEndTime] = useState("23:59");
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -58,8 +61,8 @@ export default function Register() {
                             email,
                             password,
                             name: username,
-                            startTime: "01:00",
-                            endTime: "23:59"
+                            startTime,
+                            endTime,
                         },
                     })
                     .then((res) => {
@@ -168,6 +171,50 @@ export default function Register() {
                                     name="conf-password"
                                     type="password"
                                     autoComplete="current-password"
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    required
+                                    fullWidth
+                                    id="startTime"
+                                    label="Working Start Time"
+                                    name="startTime"
+                                    type="time"
+                                    value={startTime}
+                                    onChange={(e) => {
+                                        let hrs = e.target.value.split(":")[0];
+                                        let min = e.target.value.split(":")[1];
+
+                                        let hrs2 = endTime.split(":")[0];
+                                        let min2 = endTime.split(":")[1];
+                                        if (hrs < hrs2)
+                                            setStartTime(e.target.value);
+                                        else if (hrs == hrs2 && min < min2)
+                                            setStartTime(e.target.value);
+                                    }}
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    required
+                                    fullWidth
+                                    id="endTime"
+                                    label="Working End Time"
+                                    name="endTime"
+                                    type="time"
+                                    value={endTime}
+                                    onChange={(e) => {
+                                        let hrs = e.target.value.split(":")[0];
+                                        let min = e.target.value.split(":")[1];
+
+                                        let hrs2 = endTime.split(":")[0];
+                                        let min2 = endTime.split(":")[1];
+                                        if (hrs > hrs2)
+                                            setEndTime(e.target.value);
+                                        else if (hrs == hrs2 && min > min2)
+                                            setEndTime(e.target.value);
+                                    }}
                                 />
                             </Grid>
                             <Button

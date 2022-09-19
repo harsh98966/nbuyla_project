@@ -34,7 +34,11 @@ import axios from "axios";
 
 import state from "../data";
 
+import { useNavigate } from "react-router-dom";
+import Header from "./Header";
+
 const Profile = () => {
+    let navigate = useNavigate();
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
 
@@ -61,38 +65,44 @@ const Profile = () => {
     }, []);
 
     const pushToDB = () => {
-        axios.request({
-            method: "get",
-            url: "http://localhost:9000/users/one-user",
-            params: {
-                email
-            }
-        })
-        .then((res) => {
-            const pass = res.data.password;
-            axios
+        axios
             .request({
-                method: "post",
-                url: `http://localhost:9000/users/update-profile`,
+                method: "get",
+                url: "http://localhost:9000/users/one-user",
                 params: {
                     email,
-                    password: pass,
-                    name: username,
-                    startTime: startTime,
-                    endTime: endTime,
                 },
             })
             .then((res) => {
-                console.log(res.data.data);
-                
-            })
-            .catch((err) => {
-                console.log(err.response);
-                
+                // const pass = res.data.password;
+                // console.log(pass);
+                axios
+                    .request({
+                        method: "post",
+                        url: `http://localhost:9000/users/update-profile`,
+                        params: {
+                            email,
+                            password: pass,
+                            name: username,
+                            startTime: startTime,
+                            endTime: endTime,
+                        },
+                    })
+                    .then((res) => {
+                        console.log(res.data);
+                        // state.loggedIn = true;
+                        state.email = res.data.user.email;
+                        state.username = res.data.user.name;
+                        state.startTime = res.data.user.startTime;
+                        state.endTime = res.data.user.endTime;
+
+
+                        setShowAlert(true);
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    });
             });
-            setShowAlert(true);
-        })
-        
     };
 
     // useEffect(() =>{
@@ -101,135 +111,144 @@ const Profile = () => {
 
     return (
         <>
-            <Box className="alignCenter" sx={{ mt: 1 }}>
-                <Stack
-                    spacing={1}
-                    sx={{
-                        width: "100%",
-                        maxWidth: 460,
-                    }}
-                    className="alignCenter"
-                >
-                    <Paper
-                        elevation={3}
-                        sx={{
-                            width: "100%",
-                            // maxWidth: 360,
-                            // border: "1px solid black",
-                            bgcolor: "background.paper",
-                            padding: "0.4rem",
-                            paddingRight: "1.5rem",
-                        }}
-                    >
-                        <List>
-                            <ListItem
-                                secondaryAction={
-                                    <IconButton
-                                        edge="end"
-                                        onClick={() => {
-                                            setEditName(true);
-                                            setDialogTitle("Enter new Name");
-                                        }}
-                                    >
-                                        <EditIcon />
-                                    </IconButton>
-                                }
+            <Grid container direction={"column"} spacing={2}>
+                <Grid item>
+                    <Box>
+                        <Header pageTitle="Profile" name={username} />
+                    </Box>
+                </Grid>
+                <Grid item>
+                    <Box className="alignCenter" sx={{ mt: 1 }}>
+                        <Stack
+                            spacing={1}
+                            sx={{
+                                width: "100%",
+                                maxWidth: 460,
+                            }}
+                            className="alignCenter"
+                        >
+                            <Paper
+                                elevation={3}
+                                sx={{
+                                    width: "100%",
+                                    // maxWidth: 360,
+                                    // border: "1px solid black",
+                                    bgcolor: "background.paper",
+                                    padding: "0.4rem",
+                                    paddingRight: "1.5rem",
+                                }}
                             >
-                                <ListItemAvatar>
-                                    <Avatar>
-                                        <AccountCircleIcon />
-                                    </Avatar>
-                                </ListItemAvatar>
-                                <ListItemText
-                                    primary="Name"
-                                    secondary={username}
-                                />
-                            </ListItem>
-                            <Divider variant="inset" component="li" />
-
-                            <ListItem>
-                                <ListItemAvatar>
-                                    <Avatar>
-                                        <AlternateEmailIcon />
-                                    </Avatar>
-                                </ListItemAvatar>
-                                <ListItemText
-                                    primary="Email"
-                                    secondary={email}
-                                />
-                            </ListItem>
-                            <Divider variant="inset" component="li" />
-
-                            <ListItem
-                                secondaryAction={
-                                    <IconButton
-                                        edge="end"
-                                        onClick={() => {
-                                            setEditPass(true);
-                                            setDialogTitle(
-                                                "Enter Your new Password"
-                                            );
-                                        }}
+                                <List>
+                                    <ListItem
+                                        secondaryAction={
+                                            <IconButton
+                                                edge="end"
+                                                onClick={() => {
+                                                    setEditName(true);
+                                                    setDialogTitle(
+                                                        "Enter new Name"
+                                                    );
+                                                }}
+                                            >
+                                                <EditIcon />
+                                            </IconButton>
+                                        }
                                     >
-                                        <EditIcon />
-                                    </IconButton>
-                                }
-                            >
-                                <ListItemAvatar>
-                                    <Avatar>
-                                        <VisibilityIcon />
-                                    </Avatar>
-                                </ListItemAvatar>
-                                <ListItemText
-                                    primary="Password"
-                                    secondary={"*-*-*-*-*-*"}
-                                />
-                            </ListItem>
-                            {/* <Divider variant="inset" component="li" /> */}
-                        </List>
-                    </Paper>
+                                        <ListItemAvatar>
+                                            <Avatar>
+                                                <AccountCircleIcon />
+                                            </Avatar>
+                                        </ListItemAvatar>
+                                        <ListItemText
+                                            primary="Name"
+                                            secondary={username}
+                                        />
+                                    </ListItem>
+                                    <Divider variant="inset" component="li" />
 
-                    <Paper
-                        elevation={3}
-                        sx={{
-                            width: "100%",
-                            // maxWidth: 360,
-                            // border: "1px solid black",
-                            bgcolor: "background.paper",
-                            padding: "0.4rem",
-                            paddingRight: "1.5rem",
-                        }}
-                    >
-                        <List>
-                            <ListItem
-                                secondaryAction={
-                                    <IconButton
-                                        edge="end"
-                                        onClick={() => {
-                                            setEditHrs(true);
-                                            setDialogTitle(
-                                                "Edit Working Hours"
-                                            );
-                                        }}
+                                    <ListItem>
+                                        <ListItemAvatar>
+                                            <Avatar>
+                                                <AlternateEmailIcon />
+                                            </Avatar>
+                                        </ListItemAvatar>
+                                        <ListItemText
+                                            primary="Email"
+                                            secondary={email}
+                                        />
+                                    </ListItem>
+                                    <Divider variant="inset" component="li" />
+
+                                    <ListItem
+                                        secondaryAction={
+                                            <IconButton
+                                                edge="end"
+                                                onClick={() => {
+                                                    setEditPass(true);
+                                                    setDialogTitle(
+                                                        "Enter Your new Password"
+                                                    );
+                                                }}
+                                            >
+                                                <EditIcon />
+                                            </IconButton>
+                                        }
                                     >
-                                        <EditIcon />
-                                    </IconButton>
-                                }
-                            >
-                                <ListItemAvatar>
-                                    <Avatar>
-                                        <ScheduleIcon />
-                                    </Avatar>
-                                </ListItemAvatar>
-                                <ListItemText
-                                    primary="Working Timings"
-                                    secondary={`${startTime} - ${endTime}`}
-                                />
-                            </ListItem>
-                        </List>
-                    </Paper>
+                                        <ListItemAvatar>
+                                            <Avatar>
+                                                <VisibilityIcon />
+                                            </Avatar>
+                                        </ListItemAvatar>
+                                        <ListItemText
+                                            primary="Password"
+                                            secondary={"*-*-*-*-*-*"}
+                                        />
+                                    </ListItem>
+                                    {/* <Divider variant="inset" component="li" /> */}
+                                </List>
+                            </Paper>
 
-                    {/* <Collapse in={changes} timeout="auto" unmountOnExit>
+                            <Paper
+                                elevation={3}
+                                sx={{
+                                    width: "100%",
+                                    // maxWidth: 360,
+                                    // border: "1px solid black",
+                                    bgcolor: "background.paper",
+                                    padding: "0.4rem",
+                                    paddingRight: "1.5rem",
+                                }}
+                            >
+                                <List>
+                                    <ListItem
+                                        secondaryAction={
+                                            <IconButton
+                                                edge="end"
+                                                onClick={() => {
+                                                    setEditHrs(true);
+                                                    setDialogTitle(
+                                                        "Edit Working Hours"
+                                                    );
+                                                }}
+                                            >
+                                                <EditIcon />
+                                            </IconButton>
+                                        }
+                                    >
+                                        <ListItemAvatar>
+                                            <Avatar>
+                                                <ScheduleIcon />
+                                            </Avatar>
+                                        </ListItemAvatar>
+                                        <ListItemText
+                                            primary="Working Timings"
+                                            secondary={`${startTime} - ${endTime}`}
+                                        />
+                                    </ListItem>
+                                </List>
+                            </Paper>
+
+                            {/* <Collapse in={changes} timeout="auto" unmountOnExit>
                         <Button
                             type="submit"
                             fullWidth
@@ -239,203 +258,207 @@ const Profile = () => {
                             Save Changes
                         </Button>
                     </Collapse> */}
-                </Stack>
-            </Box>
-            <Dialog open={editHrs}>
-                <DialogTitle>{dialogTitle}</DialogTitle>
-                <Grid
-                    container
-                    spacing={3}
-                    sx={{
-                        width: "25rem",
-                        p: 4,
-                    }}
-                >
-                    <Grid item md={12}>
-                        <TextField
-                            required
-                            fullWidth
-                            id="startTime"
-                            label="Enter Start Time"
-                            name="startTime"
-                            type="time"
-                            value={startTime}
-                            onChange={(e) => {
-                                let hrs = e.target.value.split(":")[0];
-                                let min = e.target.value.split(":")[1];
-
-                                let hrs2 = endTime.split(":")[0];
-                                let min2 = endTime.split(":")[1];
-                                if (hrs < hrs2) setStartTime(e.target.value);
-                                else if (hrs == hrs2 && min < min2)
-                                    setStartTime(e.target.value);
-                            }}
-                        />
-                    </Grid>
-
-                    <Grid item md={12}>
-                        <TextField
-                            required
-                            fullWidth
-                            id="endTime"
-                            label="Enter End Time"
-                            name="endTime"
-                            type="time"
-                            value={endTime}
-                            onChange={(e) => {
-                                let hrs = e.target.value.split(":")[0];
-                                let min = e.target.value.split(":")[1];
-
-                                let hrs2 = startTime.split(":")[0];
-                                let min2 = startTime.split(":")[1];
-                                if (hrs > hrs2) setEndTime(e.target.value);
-                                else if (hrs == hrs2 && min > min2)
-                                    setEndTime(e.target.value);
-                            }}
-                        />
-                    </Grid>
-
-                    <Grid item md={12}>
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            onClick={(e) => {
-                                setEditHrs(false);
-                                pushToDB();
-                            }}
-                            // sx={{ mt: 3, mb: 2, mr: 10, ml: 10 }}
-                        >
-                            Save Changes
-                        </Button>
-                    </Grid>
-                </Grid>
-            </Dialog>
-
-            {/* Name */}
-            <Dialog open={editName}>
-                <DialogTitle>{dialogTitle}</DialogTitle>
-                <Grid
-                    container
-                    spacing={3}
-                    sx={{
-                        width: "25rem",
-                        p: 4,
-                    }}
-                >
-                    <Grid item md={12}>
-                        <TextField
-                            required
-                            fullWidth
-                            id="username"
-                            label="Enter name"
-                            name="username"
-                            type="text"
-                            value={username}
-                            onChange={(e) => {
-                                setUsername(e.target.value);
-                            }}
-                        />
-                    </Grid>
-
-                    <Grid item md={12}>
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            onClick={(e) => {
-                                setEditName(false);
-                                pushToDB();
-                            }}
-                            // sx={{ mt: 3, mb: 2, mr: 10, ml: 10 }}
-                        >
-                            Save Changes
-                        </Button>
-                    </Grid>
-                </Grid>
-            </Dialog>
-
-            {/* Password */}
-            <Dialog open={editPass}>
-                <DialogTitle>{dialogTitle}</DialogTitle>
-                <Grid
-                    container
-                    spacing={3}
-                    sx={{
-                        width: "25rem",
-                        p: 4,
-                    }}
-                >
-                    <Grid item xs={12} md={12}>
-                        <TextField
-                            required
-                            fullWidth
-                            id="password"
-                            label="Password"
-                            name="password"
-                            type="password"
-                            value={pass}
-                            onChange={(e) => {
-                                setPass(e.target.value);
-                            }}
-                            autoComplete="current-password"
-                        />
-                    </Grid>
-                    <Grid item xs={12} md={12}>
-                        <TextField
-                            required
-                            fullWidth
-                            id="conf-password"
-                            label="Confirm Password"
-                            name="conf-password"
-                            type="password"
-                            value={cpass}
-                            onChange={(e) => {
-                                setCpass(e.target.value);
-                            }}
-                            autoComplete="current-password"
-                        />
-                    </Grid>
-
-                    <Grid item md={12}>
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            onClick={(e) => {
-                                if (pass === cpass) {
-                                    setEditPass(false);
-                                    pushToDB();
-                                } else {
-                                    setShowAlertMissMatch(true);
-                                }
+                        </Stack>
+                    </Box>
+                    <Dialog open={editHrs}>
+                        <DialogTitle>{dialogTitle}</DialogTitle>
+                        <Grid
+                            container
+                            spacing={3}
+                            sx={{
+                                width: "25rem",
+                                p: 4,
                             }}
                         >
-                            Save Changes
-                        </Button>
-                    </Grid>
+                            <Grid item md={12}>
+                                <TextField
+                                    required
+                                    fullWidth
+                                    id="startTime"
+                                    label="Enter Start Time"
+                                    name="startTime"
+                                    type="time"
+                                    value={startTime}
+                                    onChange={(e) => {
+                                        let hrs = e.target.value.split(":")[0];
+                                        let min = e.target.value.split(":")[1];
+
+                                        let hrs2 = endTime.split(":")[0];
+                                        let min2 = endTime.split(":")[1];
+                                        if (hrs < hrs2)
+                                            setStartTime(e.target.value);
+                                        else if (hrs == hrs2 && min < min2)
+                                            setStartTime(e.target.value);
+                                    }}
+                                />
+                            </Grid>
+
+                            <Grid item md={12}>
+                                <TextField
+                                    required
+                                    fullWidth
+                                    id="endTime"
+                                    label="Enter End Time"
+                                    name="endTime"
+                                    type="time"
+                                    value={endTime}
+                                    onChange={(e) => {
+                                        let hrs = e.target.value.split(":")[0];
+                                        let min = e.target.value.split(":")[1];
+
+                                        let hrs2 = startTime.split(":")[0];
+                                        let min2 = startTime.split(":")[1];
+                                        if (hrs > hrs2)
+                                            setEndTime(e.target.value);
+                                        else if (hrs == hrs2 && min > min2)
+                                            setEndTime(e.target.value);
+                                    }}
+                                />
+                            </Grid>
+
+                            <Grid item md={12}>
+                                <Button
+                                    type="submit"
+                                    fullWidth
+                                    variant="contained"
+                                    onClick={(e) => {
+                                        setEditHrs(false);
+                                        pushToDB();
+                                    }}
+                                    // sx={{ mt: 3, mb: 2, mr: 10, ml: 10 }}
+                                >
+                                    Save Changes
+                                </Button>
+                            </Grid>
+                        </Grid>
+                    </Dialog>
+
+                    {/* Name */}
+                    <Dialog open={editName}>
+                        <DialogTitle>{dialogTitle}</DialogTitle>
+                        <Grid
+                            container
+                            spacing={3}
+                            sx={{
+                                width: "25rem",
+                                p: 4,
+                            }}
+                        >
+                            <Grid item md={12}>
+                                <TextField
+                                    required
+                                    fullWidth
+                                    id="username"
+                                    label="Enter name"
+                                    name="username"
+                                    type="text"
+                                    value={username}
+                                    onChange={(e) => {
+                                        setUsername(e.target.value);
+                                    }}
+                                />
+                            </Grid>
+
+                            <Grid item md={12}>
+                                <Button
+                                    type="submit"
+                                    fullWidth
+                                    variant="contained"
+                                    onClick={(e) => {
+                                        setEditName(false);
+                                        pushToDB();
+                                    }}
+                                    // sx={{ mt: 3, mb: 2, mr: 10, ml: 10 }}
+                                >
+                                    Save Changes
+                                </Button>
+                            </Grid>
+                        </Grid>
+                    </Dialog>
+
+                    {/* Password */}
+                    <Dialog open={editPass}>
+                        <DialogTitle>{dialogTitle}</DialogTitle>
+                        <Grid
+                            container
+                            spacing={3}
+                            sx={{
+                                width: "25rem",
+                                p: 4,
+                            }}
+                        >
+                            <Grid item xs={12} md={12}>
+                                <TextField
+                                    required
+                                    fullWidth
+                                    id="password"
+                                    label="Password"
+                                    name="password"
+                                    type="password"
+                                    value={pass}
+                                    onChange={(e) => {
+                                        setPass(e.target.value);
+                                    }}
+                                    autoComplete="current-password"
+                                />
+                            </Grid>
+                            <Grid item xs={12} md={12}>
+                                <TextField
+                                    required
+                                    fullWidth
+                                    id="conf-password"
+                                    label="Confirm Password"
+                                    name="conf-password"
+                                    type="password"
+                                    value={cpass}
+                                    onChange={(e) => {
+                                        setCpass(e.target.value);
+                                    }}
+                                    autoComplete="current-password"
+                                />
+                            </Grid>
+
+                            <Grid item md={12}>
+                                <Button
+                                    type="submit"
+                                    fullWidth
+                                    variant="contained"
+                                    onClick={(e) => {
+                                        if (pass === cpass) {
+                                            setEditPass(false);
+                                            pushToDB();
+                                        } else {
+                                            setShowAlertMissMatch(true);
+                                        }
+                                    }}
+                                >
+                                    Save Changes
+                                </Button>
+                            </Grid>
+                        </Grid>
+                    </Dialog>
+
+                    <Snackbar
+                        open={showAlert}
+                        autoHideDuration={2500}
+                        onClose={() => setShowAlert(false)}
+                    >
+                        <Alert variant="filled" severity={"success"}>
+                            {"Successfully Updated"}
+                        </Alert>
+                    </Snackbar>
+
+                    <Snackbar
+                        open={showAlertMissMatch}
+                        autoHideDuration={2500}
+                        onClose={() => setShowAlertMissMatch(false)}
+                    >
+                        <Alert variant="filled" severity={"error"}>
+                            {"Password Miss Match"}
+                        </Alert>
+                    </Snackbar>
                 </Grid>
-            </Dialog>
-
-            <Snackbar
-                open={showAlert}
-                autoHideDuration={2500}
-                onClose={() => setShowAlert(false)}
-            >
-                <Alert variant="filled" severity={"success"}>
-                    {"Successfully Updated"}
-                </Alert>
-            </Snackbar>
-
-            <Snackbar
-                open={showAlertMissMatch}
-                autoHideDuration={2500}
-                onClose={() => setShowAlertMissMatch(false)}
-            >
-                <Alert variant="filled" severity={"error"}>
-                    {"Password Miss Match"}
-                </Alert>
-            </Snackbar>
+            </Grid>
         </>
     );
 };

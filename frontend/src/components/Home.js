@@ -114,47 +114,15 @@ const Home = ({ children, pageTitle }) => {
                     backgroundColor: "#D8D8D8",
                 }}
             >
-                <Grid container direction={"column"} spacing={2}>
+                {children}
+                {/* <Grid container direction={"column"} spacing={2}>
                     <Grid item>
                         <Box>
-                            <AppBar
-                                position="static"
-                                sx={
-                                    {
-                                        // backgroundColor: '#3D3C42'
-                                    }
-                                }
-                            >
-                                <Toolbar>
-                                    <IconButton
-                                        size="large"
-                                        edge="start"
-                                        color="inherit"
-                                        aria-label="menu"
-                                        sx={{ mr: 2 }}
-                                    >
-                                        <AndroidIcon />
-                                    </IconButton>
-                                    <Typography
-                                        variant="h6"
-                                        component="div"
-                                        sx={{ flexGrow: 1 }}
-                                    >
-                                        {pageTitle}
-                                    </Typography>
-                                    <Typography
-                                        variant="h6"
-                                        component="div"
-                                        // sx={{ flexGrow:  }}
-                                    >
-                                        {`${state.loggedIn ? 'Welcome back, '+state.username : 'Please Login'}`}
-                                    </Typography>
-                                </Toolbar>
-                            </AppBar>
+                            
                         </Box>
                     </Grid>
                     <Grid item>{children}</Grid>
-                </Grid>
+                </Grid> */}
             </Grid>
         </Grid>
     );
