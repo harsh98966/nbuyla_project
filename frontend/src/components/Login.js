@@ -153,11 +153,7 @@ export default function Login() {
                                 direction={"column"}
                                 className="alignCenter"
                             >
-                                <Grid item>
-                                    <Link to={"/forget_password"}>
-                                        Forgot password?
-                                    </Link>
-                                </Grid>
+                                
                                 <Grid item>
                                     {"Don't have an account? | "}
                                     <Link to={"/register"}>{"Sign Up"}</Link>
