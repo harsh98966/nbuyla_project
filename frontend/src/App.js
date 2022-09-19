@@ -1,27 +1,62 @@
-import React from 'react'
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import ForgetPassword from './components/ForgetPassword';
+import React from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 
-import Login from './components/Login'
-import Profile from './components/Profile';
-import Register from './components/Register';
+
+import Home from "./components/Home";
+import Login from "./components/Login";
+import Profile from "./components/Profile";
+import Register from "./components/Register";
+import Schedule from "./components/Schedule";
+import UpcomingMeetings from "./components/UpcomingMeetings";
 
 const App = () => {
-  return (
-    <BrowserRouter>
-      <Routes>
-        {/* login / register */}
-        <Route path='/' element={<Login />} />
-        <Route path='/login' element={<Login />} />
-        <Route path='/register' element={<Register />} />
-        <Route path='/forget_password' element={<ForgetPassword />} />
+    return (
+        <BrowserRouter>
+            <Routes>
+                {/* login / register */}
+                <Route path="/" element={<Login />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+              
 
-        {/* profile page */}
-        <Route path='/profile' element={<Profile />} />
+                {/* profile page */}
+                <Route
+                    path="/profile"
+                    element={
+                        <>
+                            <Home pageTitle='Profile'>
+                                <Profile />
+                            </Home>
+                        </>
+                    }
+                />
 
-      </Routes>
-    </BrowserRouter>
-  );
-}
+                {/* upcoming meetings */}
+                <Route
+                    path="/upcoming"
+                    element={
+                        <>
+                            <Home pageTitle='Upcoming Meetings'>
+                                <UpcomingMeetings />
+                            </Home>
+                        </>
+                    }
+                />
 
-export default App
+                {/* schedule meetings */}
+                <Route
+                    path="/schedule"
+                    element={
+                        <>
+                            <Home pageTitle='Schedule a Meeting'>
+                                <Schedule />
+                            </Home>
+                        </>
+                    }
+                />
+            </Routes>
+        </BrowserRouter>
+    );
+};
+
+export default App;

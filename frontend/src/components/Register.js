@@ -125,7 +125,7 @@ export default function Login() {
                                     label="Email Address"
                                     name="email"
                                     autoComplete="email"
-                                    autoFocus
+                           
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
@@ -137,7 +137,7 @@ export default function Login() {
                                     name="password"
                                     type="password"
                                     autoComplete="current-password"
-                                    autoFocus
+                      
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
@@ -149,7 +149,7 @@ export default function Login() {
                                     name="conf-password"
                                     type="password"
                                     autoComplete="current-password"
-                                    autoFocus
+                            
                                 />
                             </Grid>
                             <Button
