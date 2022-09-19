@@ -12,10 +12,12 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Link } from "react-router-dom";
 import { Alert, Snackbar } from "@mui/material";
 
+import { useNavigate } from "react-router-dom";
+
+
 import axios from "axios";
 
 function Copyright(props) {
-
     return (
         <Typography
             variant="body2"
@@ -36,6 +38,9 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function Register() {
+
+    const navigate = useNavigate();
+
     const [showAlert, setShowAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState("");
     const [alertSeverity, setAlertSeverity] = useState("error");
@@ -70,6 +75,7 @@ export default function Register() {
                         setAlertMessage(res.data.message);
                         setAlertSeverity("success");
                         setShowAlert(true);
+                        navigate("/login");
                     })
                     .catch((err) => {
                         console.log(err.response);
@@ -183,15 +189,7 @@ export default function Register() {
                                     type="time"
                                     value={startTime}
                                     onChange={(e) => {
-                                        let hrs = e.target.value.split(":")[0];
-                                        let min = e.target.value.split(":")[1];
-
-                                        let hrs2 = endTime.split(":")[0];
-                                        let min2 = endTime.split(":")[1];
-                                        if (hrs < hrs2)
-                                            setStartTime(e.target.value);
-                                        else if (hrs == hrs2 && min < min2)
-                                            setStartTime(e.target.value);
+                                        setStartTime(e.target.value); 
                                     }}
                                 />
                             </Grid>
@@ -205,15 +203,9 @@ export default function Register() {
                                     type="time"
                                     value={endTime}
                                     onChange={(e) => {
-                                        let hrs = e.target.value.split(":")[0];
-                                        let min = e.target.value.split(":")[1];
-
-                                        let hrs2 = endTime.split(":")[0];
-                                        let min2 = endTime.split(":")[1];
-                                        if (hrs > hrs2)
-                                            setEndTime(e.target.value);
-                                        else if (hrs == hrs2 && min > min2)
-                                            setEndTime(e.target.value);
+                                    
+                                        setEndTime(e.target.value);
+                                        setEndTime(e.target.value);
                                     }}
                                 />
                             </Grid>

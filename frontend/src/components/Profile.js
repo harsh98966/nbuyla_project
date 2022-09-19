@@ -57,15 +57,19 @@ const Profile = () => {
 
     const [dialogTitle, setDialogTitle] = useState("");
 
+    const [reload, setReload] = useState(true);
+
     useEffect(() => {
-        setUsername(state.username);
-        setEmail(state.email);
-        setStartTime(state.startTime);
-        setEndTime(state.endTime);
-    }, []);
+        
+            setUsername(state.username);
+            setEmail(state.email);
+            setStartTime(state.startTime);
+            setEndTime(state.endTime);
+            setReload(false);
+        
+    }, [reload]);
 
     const pushToDB = () => {
-
         axios
             .request({
                 method: "get",
@@ -75,46 +79,40 @@ const Profile = () => {
                 },
             })
             .then((res) => {
-                // const pass = res.data.password;
-                // console.log(pass);
-                if(username.length == 0){
-
-                }
+                const update = pass.length == 0 ? res.data.data.password : pass;
+        
                 axios
                     .request({
                         method: "post",
                         url: `http://localhost:9000/users/update-profile`,
                         params: {
                             email,
-                            password: pass,
+                            password: update,
                             name: username,
                             startTime: startTime,
                             endTime: endTime,
                         },
                     })
                     .then((res) => {
-                        console.log(res.data);
                         // state.loggedIn = true;
                         state.email = res.data.user.email;
                         state.username = res.data.user.name;
                         state.startTime = res.data.user.startTime;
                         state.endTime = res.data.user.endTime;
 
-
+                        setAlertSeverity("success");
+                        setAlertMessage(res.data.message);
                         setShowAlert(true);
+                        setReload(true);
                     })
                     .catch((err) => {
-                        console.log("DFdsfa");
                         setAlertSeverity("error");
-                        setAlertMessage(err.response.data.message)
+                        setAlertMessage(err.response.data.message);
                         setShowAlert(true);
+                        setReload(true);
                     });
             });
     };
-
-    // useEffect(() =>{
-    //     setChanges(true);
-    // }, [username, email, working_hrs])
 
     return (
         <>
@@ -446,16 +444,6 @@ const Profile = () => {
                     </Dialog>
 
                     <Snackbar
-                        open={showAlert}
-                        autoHideDuration={2500}
-                        onClose={() => setShowAlert(false)}
-                    >
-                        <Alert variant="filled" severity={"success"}>
-                            {"Successfully Updated"}
-                        </Alert>
-                    </Snackbar>
-
-                    <Snackbar
                         open={showAlertMissMatch}
                         autoHideDuration={2500}
                         onClose={() => setShowAlertMissMatch(false)}
@@ -466,14 +454,14 @@ const Profile = () => {
                     </Snackbar>
 
                     <Snackbar
-                    open={showAlert}
-                    autoHideDuration={2500}
-                    onClose={() => setShowAlert(false)}
-                >
-                    <Alert variant="filled" severity={alertSeverity}>
-                        {alertMessage}
-                    </Alert>
-                </Snackbar>
+                        open={showAlert}
+                        autoHideDuration={2500}
+                        onClose={() => setShowAlert(false)}
+                    >
+                        <Alert variant="filled" severity={alertSeverity}>
+                            {alertMessage}
+                        </Alert>
+                    </Snackbar>
                 </Grid>
             </Grid>
         </>
