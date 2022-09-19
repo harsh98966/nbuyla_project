@@ -10,8 +10,6 @@ import IconButton from "@mui/material/IconButton";
 import {
     Alert,
     Button,
-    Collapse,
-    Container,
     Dialog,
     DialogTitle,
     Grid,
@@ -24,7 +22,6 @@ import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import ScheduleIcon from "@mui/icons-material/Schedule";
-import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 
 import React, { useEffect, useState } from "react";
@@ -55,6 +52,9 @@ const Profile = () => {
     const [showAlert, setShowAlert] = useState(false);
     const [showAlertMissMatch, setShowAlertMissMatch] = useState(false);
 
+    const [alertMessage, setAlertMessage] = useState("");
+    const [alertSeverity, setAlertSeverity] = useState("error");
+
     const [dialogTitle, setDialogTitle] = useState("");
 
     useEffect(() => {
@@ -65,6 +65,7 @@ const Profile = () => {
     }, []);
 
     const pushToDB = () => {
+
         axios
             .request({
                 method: "get",
@@ -76,6 +77,9 @@ const Profile = () => {
             .then((res) => {
                 // const pass = res.data.password;
                 // console.log(pass);
+                if(username.length == 0){
+
+                }
                 axios
                     .request({
                         method: "post",
@@ -100,7 +104,10 @@ const Profile = () => {
                         setShowAlert(true);
                     })
                     .catch((err) => {
-                        console.log(err);
+                        console.log("DFdsfa");
+                        setAlertSeverity("error");
+                        setAlertMessage(err.response.data.message)
+                        setShowAlert(true);
                     });
             });
     };
@@ -457,6 +464,16 @@ const Profile = () => {
                             {"Password Miss Match"}
                         </Alert>
                     </Snackbar>
+
+                    <Snackbar
+                    open={showAlert}
+                    autoHideDuration={2500}
+                    onClose={() => setShowAlert(false)}
+                >
+                    <Alert variant="filled" severity={alertSeverity}>
+                        {alertMessage}
+                    </Alert>
+                </Snackbar>
                 </Grid>
             </Grid>
         </>

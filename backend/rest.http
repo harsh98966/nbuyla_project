@@ -1,0 +1,52 @@
+# Users Routes
+
+POST http://localhost:9000/users/register
+Content-Type: application/json
+
+{
+  "email": "harshisindian@gmail.com",
+  "password": "12345",
+  "name": "Harsh Prasad",
+  "startTime": "11:00",
+  "endTime": "17:00"
+}
+
+###
+
+POST  http://localhost:9000/users/login
+Content-Type: application/json
+
+{
+  "email": "sahil@gmail.com",
+  "password": "55"
+}
+
+###
+
+POST  http://localhost:9000/users/update-profile
+Content-Type: application/json
+
+{
+  "email": "harshisindian@gmail.com",
+  "password": "11",
+  "name": "Harsh",
+  "startTime": "10:00",
+  "endTime": "16:00"
+}
+
+###
+
+GET http://localhost:9000/users/all-user
+Content-Type: application/json
+
+###
+
+GET http://localhost:9000/users/one-user
+Content-Type: application/json
+
+{
+  "email": "harshisindian@gmail.com"
+}
+
+#Appointment Route
+

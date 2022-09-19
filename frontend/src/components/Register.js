@@ -61,8 +61,8 @@ export default function Register() {
                             email,
                             password,
                             name: username,
-                            startTime,
-                            endTime,
+                            startTime: startTime,
+                            endTime: endTime,
                         },
                     })
                     .then((res) => {
