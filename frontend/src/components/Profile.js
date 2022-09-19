@@ -8,6 +8,7 @@ import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 
 import {
+    Alert,
     Button,
     Collapse,
     Container,
@@ -15,6 +16,7 @@ import {
     DialogTitle,
     Grid,
     Paper,
+    Snackbar,
     TextField,
 } from "@mui/material";
 
@@ -28,27 +30,70 @@ import EditIcon from "@mui/icons-material/Edit";
 import React, { useEffect, useState } from "react";
 import { Box, Stack } from "@mui/system";
 
+import axios from "axios";
+
+import state from "../data";
+
 const Profile = () => {
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
-    const [working_hrs, setWorking_hrs] = useState("");
 
     const [startTime, setStartTime] = useState("");
     const [endTime, setEndTime] = useState("");
 
-    const [changes, setChanges] = useState(false);
+    const [pass, setPass] = useState("");
+    const [cpass, setCpass] = useState("");
 
-    const [open, setOpen] = useState(false);
+    const [editHrs, setEditHrs] = useState(false);
+    const [editPass, setEditPass] = useState(false);
+    const [editName, setEditName] = useState(false);
+
+    const [showAlert, setShowAlert] = useState(false);
+    const [showAlertMissMatch, setShowAlertMissMatch] = useState(false);
 
     const [dialogTitle, setDialogTitle] = useState("");
 
     useEffect(() => {
-        setUsername("harsh");
-        setEmail("19Harsh@nbyula.com");
-        // setWorking_hrs("4pm - 5pm");
-        setStartTime("14:22");
-        setEndTime("15:22");
+        setUsername(state.username);
+        setEmail(state.email);
+        setStartTime(state.startTime);
+        setEndTime(state.endTime);
     }, []);
+
+    const pushToDB = () => {
+        axios.request({
+            method: "get",
+            url: "http://localhost:9000/users/one-user",
+            params: {
+                email
+            }
+        })
+        .then((res) => {
+            const pass = res.data.password;
+            axios
+            .request({
+                method: "post",
+                url: `http://localhost:9000/users/update-profile`,
+                params: {
+                    email,
+                    password: pass,
+                    name: username,
+                    startTime: startTime,
+                    endTime: endTime,
+                },
+            })
+            .then((res) => {
+                console.log(res.data.data);
+                
+            })
+            .catch((err) => {
+                console.log(err.response);
+                
+            });
+            setShowAlert(true);
+        })
+        
+    };
 
     // useEffect(() =>{
     //     setChanges(true);
@@ -81,7 +126,10 @@ const Profile = () => {
                                 secondaryAction={
                                     <IconButton
                                         edge="end"
-                                        onClick={() => setChanges(true)}
+                                        onClick={() => {
+                                            setEditName(true);
+                                            setDialogTitle("Enter new Name");
+                                        }}
                                     >
                                         <EditIcon />
                                     </IconButton>
@@ -116,7 +164,12 @@ const Profile = () => {
                                 secondaryAction={
                                     <IconButton
                                         edge="end"
-                                        onClick={() => setChanges(true)}
+                                        onClick={() => {
+                                            setEditPass(true);
+                                            setDialogTitle(
+                                                "Enter Your new Password"
+                                            );
+                                        }}
                                     >
                                         <EditIcon />
                                     </IconButton>
@@ -153,8 +206,7 @@ const Profile = () => {
                                     <IconButton
                                         edge="end"
                                         onClick={() => {
-                                            setChanges(true);
-                                            setOpen(true);
+                                            setEditHrs(true);
                                             setDialogTitle(
                                                 "Edit Working Hours"
                                             );
@@ -189,10 +241,7 @@ const Profile = () => {
                     </Collapse> */}
                 </Stack>
             </Box>
-            <Dialog
-                
-                open={open}
-            >
+            <Dialog open={editHrs}>
                 <DialogTitle>{dialogTitle}</DialogTitle>
                 <Grid
                     container
@@ -239,7 +288,7 @@ const Profile = () => {
 
                                 let hrs2 = startTime.split(":")[0];
                                 let min2 = startTime.split(":")[1];
-                                if (hrs > hrs2) setStartTime(e.target.value);
+                                if (hrs > hrs2) setEndTime(e.target.value);
                                 else if (hrs == hrs2 && min > min2)
                                     setEndTime(e.target.value);
                             }}
@@ -251,9 +300,9 @@ const Profile = () => {
                             type="submit"
                             fullWidth
                             variant="contained"
-
                             onClick={(e) => {
-                                
+                                setEditHrs(false);
+                                pushToDB();
                             }}
                             // sx={{ mt: 3, mb: 2, mr: 10, ml: 10 }}
                         >
@@ -262,6 +311,131 @@ const Profile = () => {
                     </Grid>
                 </Grid>
             </Dialog>
+
+            {/* Name */}
+            <Dialog open={editName}>
+                <DialogTitle>{dialogTitle}</DialogTitle>
+                <Grid
+                    container
+                    spacing={3}
+                    sx={{
+                        width: "25rem",
+                        p: 4,
+                    }}
+                >
+                    <Grid item md={12}>
+                        <TextField
+                            required
+                            fullWidth
+                            id="username"
+                            label="Enter name"
+                            name="username"
+                            type="text"
+                            value={username}
+                            onChange={(e) => {
+                                setUsername(e.target.value);
+                            }}
+                        />
+                    </Grid>
+
+                    <Grid item md={12}>
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            onClick={(e) => {
+                                setEditName(false);
+                                pushToDB();
+                            }}
+                            // sx={{ mt: 3, mb: 2, mr: 10, ml: 10 }}
+                        >
+                            Save Changes
+                        </Button>
+                    </Grid>
+                </Grid>
+            </Dialog>
+
+            {/* Password */}
+            <Dialog open={editPass}>
+                <DialogTitle>{dialogTitle}</DialogTitle>
+                <Grid
+                    container
+                    spacing={3}
+                    sx={{
+                        width: "25rem",
+                        p: 4,
+                    }}
+                >
+                    <Grid item xs={12} md={12}>
+                        <TextField
+                            required
+                            fullWidth
+                            id="password"
+                            label="Password"
+                            name="password"
+                            type="password"
+                            value={pass}
+                            onChange={(e) => {
+                                setPass(e.target.value);
+                            }}
+                            autoComplete="current-password"
+                        />
+                    </Grid>
+                    <Grid item xs={12} md={12}>
+                        <TextField
+                            required
+                            fullWidth
+                            id="conf-password"
+                            label="Confirm Password"
+                            name="conf-password"
+                            type="password"
+                            value={cpass}
+                            onChange={(e) => {
+                                setCpass(e.target.value);
+                            }}
+                            autoComplete="current-password"
+                        />
+                    </Grid>
+
+                    <Grid item md={12}>
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            onClick={(e) => {
+                                if (pass === cpass) {
+                                    setEditPass(false);
+                                    pushToDB();
+                                } else {
+                                    setShowAlertMissMatch(true);
+                                }
+                            }}
+                        >
+                            Save Changes
+                        </Button>
+                    </Grid>
+                </Grid>
+            </Dialog>
+
+            <Snackbar
+                open={showAlert}
+                autoHideDuration={2500}
+                onClose={() => setShowAlert(false)}
+            >
+                <Alert variant="filled" severity={"success"}>
+                    {"Successfully Updated"}
+                </Alert>
+            </Snackbar>
+
+            <Snackbar
+                open={showAlertMissMatch}
+                autoHideDuration={2500}
+                onClose={() => setShowAlertMissMatch(false)}
+            >
+                <Alert variant="filled" severity={"error"}>
+                    {"Password Miss Match"}
+                </Alert>
+            </Snackbar>
         </>
     );
 };

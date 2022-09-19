@@ -10,7 +10,9 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 import { Link } from "react-router-dom";
-import { Alert, Divider, Snackbar } from "@mui/material";
+import { Alert, Snackbar } from "@mui/material";
+
+import axios from "axios";
 
 function Copyright(props) {
     return (
@@ -32,13 +34,11 @@ function Copyright(props) {
 
 const theme = createTheme();
 
-export default function Login() {
-
+export default function Register() {
     const [showAlert, setShowAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState("");
-    const [alertSeverity, setAlertSeverity] = useState("error")
+    const [alertSeverity, setAlertSeverity] = useState("error");
 
-    
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
@@ -49,17 +49,38 @@ export default function Login() {
         const username = data.get("username");
 
         if (email && password && username && confPass) {
-            if(confPass === password){
-                console.log(username, email, password);
-
-            }
-            else{
-                setAlertMessage('Password Miss Match');
+            if (confPass === password) {
+                axios
+                    .request({
+                        method: "post",
+                        url: `http://localhost:9000/users/register`,
+                        params: {
+                            email,
+                            password,
+                            name: username,
+                            startTime: "01:00",
+                            endTime: "23:59"
+                        },
+                    })
+                    .then((res) => {
+                        console.log(res.data.data);
+                        setAlertMessage(res.data.message);
+                        setAlertSeverity("success");
+                        setShowAlert(true);
+                    })
+                    .catch((err) => {
+                        console.log(err.response);
+                        setAlertMessage(err.response.data.message);
+                        setAlertSeverity("error");
+                        setShowAlert(true);
+                    });
+            } else {
+                setAlertMessage("Password Miss Match");
                 setAlertSeverity("warning");
-                setShowAlert(true);    
+                setShowAlert(true);
             }
         } else {
-            setAlertMessage('Make sure to enter all the required details.');
+            setAlertMessage("Make sure to enter all the required details.");
             setAlertSeverity("error");
             setShowAlert(true);
         }
@@ -98,7 +119,7 @@ export default function Login() {
                         <Typography component="h1" variant="h4">
                             Register
                         </Typography>
-                        
+
                         <Grid
                             container
                             component="form"
@@ -125,7 +146,6 @@ export default function Login() {
                                     label="Email Address"
                                     name="email"
                                     autoComplete="email"
-                           
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
@@ -137,7 +157,6 @@ export default function Login() {
                                     name="password"
                                     type="password"
                                     autoComplete="current-password"
-                      
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
@@ -149,7 +168,6 @@ export default function Login() {
                                     name="conf-password"
                                     type="password"
                                     autoComplete="current-password"
-                            
                                 />
                             </Grid>
                             <Button
@@ -175,7 +193,9 @@ export default function Login() {
                     autoHideDuration={2500}
                     onClose={() => setShowAlert(false)}
                 >
-                    <Alert variant="filled" severity={alertSeverity}>{alertMessage}</Alert>
+                    <Alert variant="filled" severity={alertSeverity}>
+                        {alertMessage}
+                    </Alert>
                 </Snackbar>
             </Box>
         </ThemeProvider>

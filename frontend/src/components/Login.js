@@ -7,8 +7,12 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { Alert, Divider, Snackbar } from "@mui/material";
 
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
+
+import axios from "axios";
+import state from "../data";
 
 function Copyright(props) {
     return (
@@ -31,13 +35,50 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function Login() {
-    const handleSubmit = (event) => {
+    const navigate = useNavigate();
+
+    const [showAlert, setShowAlert] = React.useState(false);
+    const [alertMessage, setAlertMessage] = React.useState("");
+    const [alertSeverity, setAlertSeverity] = React.useState("error");
+
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        console.log({
-            email: data.get("email"),
-            password: data.get("password"),
-        });
+        const formData = new FormData(event.currentTarget);
+        const email = formData.get("email");
+        const pass = formData.get("password");
+
+        axios
+            .request({
+                method: "post",
+                url: `http://localhost:9000/users/login`,
+                params: {
+                    email: email,
+                    password: pass,
+                },
+            })
+            .then((res) => {
+                console.log(res.data);
+                setAlertMessage(res.data.message);
+                setAlertSeverity("success");
+                setShowAlert(true);
+                
+                setTimeout(() => {
+                    state.loggedIn = true;
+                    state.email = res.data.user.email;
+                    state.username = res.data.user.name;
+                    state.startTime = res.data.user.startTime;
+                    state.endTime = res.data.user.endTime;
+
+                    console.log(state);
+                    navigate('/profile')
+                }, 1000)
+            })
+            .catch((err) => {
+                console.log(err.response);
+                setAlertMessage(err.response.data.message);
+                setAlertSeverity("error");
+                setShowAlert(true);
+            });
     };
 
     return (
@@ -50,13 +91,13 @@ export default function Login() {
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    backgroundColor: "#023C40"
+                    backgroundColor: "#023C40",
                 }}
             >
                 <Container
                     sx={{
                         borderRadius: "5px",
-                        backgroundColor: "white"
+                        backgroundColor: "white",
                     }}
                     component="main"
                     maxWidth="sm"
@@ -107,7 +148,11 @@ export default function Login() {
                             >
                                 Sign In
                             </Button>
-                            <Grid container direction={'column'} className='alignCenter' >
+                            <Grid
+                                container
+                                direction={"column"}
+                                className="alignCenter"
+                            >
                                 <Grid item>
                                     <Link to={"/forget_password"}>
                                         Forgot password?
@@ -122,6 +167,15 @@ export default function Login() {
                     </Box>
                     <Copyright sx={{ mt: 8, mb: 4 }} />
                 </Container>
+                <Snackbar
+                    open={showAlert}
+                    autoHideDuration={2500}
+                    onClose={() => setShowAlert(false)}
+                >
+                    <Alert variant="filled" severity={alertSeverity}>
+                        {alertMessage}
+                    </Alert>
+                </Snackbar>
             </Box>
         </ThemeProvider>
     );

@@ -18,8 +18,9 @@ import React from "react";
 import UpcomingIcon from "@mui/icons-material/Upcoming";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import AndroidIcon from '@mui/icons-material/Android';
-import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
+import AndroidIcon from "@mui/icons-material/Android";
+import SentimentSatisfiedAltIcon from "@mui/icons-material/SentimentSatisfiedAlt";
+import state from "../data";
 
 const Home = ({ children, pageTitle }) => {
     let navigate = useNavigate();
@@ -54,7 +55,7 @@ const Home = ({ children, pageTitle }) => {
                         borderBottom: "1px dashed grey",
                         width: "100%",
                         paddingTop: "0.5rem",
-                        paddingBottom: "0.85rem"
+                        paddingBottom: "0.85rem",
                     }}
                 >
                     <Typography
@@ -116,9 +117,14 @@ const Home = ({ children, pageTitle }) => {
                 <Grid container direction={"column"} spacing={2}>
                     <Grid item>
                         <Box>
-                            <AppBar position="static" sx={{
-                                // backgroundColor: '#3D3C42'
-                            }}>
+                            <AppBar
+                                position="static"
+                                sx={
+                                    {
+                                        // backgroundColor: '#3D3C42'
+                                    }
+                                }
+                            >
                                 <Toolbar>
                                     <IconButton
                                         size="large"
@@ -136,9 +142,13 @@ const Home = ({ children, pageTitle }) => {
                                     >
                                         {pageTitle}
                                     </Typography>
-                                    <IconButton color="inherit">
-                                        <SentimentSatisfiedAltIcon />
-                                    </IconButton>
+                                    <Typography
+                                        variant="h6"
+                                        component="div"
+                                        // sx={{ flexGrow:  }}
+                                    >
+                                        {`${state.loggedIn ? 'Welcome back, '+state.username : 'Please Login'}`}
+                                    </Typography>
                                 </Toolbar>
                             </AppBar>
                         </Box>
